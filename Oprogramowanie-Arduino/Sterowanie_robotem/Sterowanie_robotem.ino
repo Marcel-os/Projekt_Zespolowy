@@ -1,15 +1,15 @@
 #define PWM_L_PIN 5
 #define PWM_R_PIN 6
 
-#define MOTOR_L_PIN1 7
-#define MOTOR_L_PIN2 8
+#define MOTOR_L_PIN1 9
+#define MOTOR_L_PIN2 10
 
-#define MOTOR_R_PIN1 9
-#define MOTOR_R_PIN2 10
+#define MOTOR_R_PIN1 7
+#define MOTOR_R_PIN2 8
 
-#define DISTANCE_SENSOR_PIN A0
-#define GROUND_SENSOR1_PIN A1
-#define GROUND_SENSOR2_PIN A2
+#define DISTANCE_SENSOR_PIN A3
+#define GROUND_SENSOR1_PIN A0
+#define GROUND_SENSOR2_PIN A1
 
 void setup() {
   pinMode(MOTOR_L_PIN1, OUTPUT);
@@ -57,6 +57,10 @@ void get_distance_ground(int &distance1, int &distance2){
 
 
 void loop() {
-  
 
+  go_straight(100);
+  delay(10000);
+  go_back(100);
+  delay(1000);
+  
 }
