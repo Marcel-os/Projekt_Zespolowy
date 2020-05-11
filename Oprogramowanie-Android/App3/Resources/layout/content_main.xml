@@ -1,0 +1,66 @@
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_main"
+    android:background="#ff1d1d1d"
+   >
+
+    <Button
+        android:text="Connect"
+        android:layout_width="120sp"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnConnect"
+        android:layout_marginLeft="0.0dp"
+        android:layout_marginRight="0.0dp"
+        android:layout_alignParentRight="true"/>
+    <EditText
+        android:layout_width="250sp"
+        android:layout_height="40sp"
+        android:id="@+id/txtIP"
+        android:layout_marginTop="9.5dp"
+        android:layout_marginLeft="11dp"
+        android:layout_marginRight="125sp" />
+    <EditText
+        android:layout_width="100sp"
+        android:layout_height="40sp"
+        android:id="@+id/txtPort"
+        android:layout_marginTop="45.0dp"
+        android:layout_marginLeft="11dp" />
+
+    <Button
+        android:text="Disconnect"
+        android:layout_width="120sp"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnDisconnect"
+        android:layout_marginLeft="0.0dp"
+        android:layout_marginRight="0.0dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="45dp" />
+
+    <Button
+        android:text="Autofill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnAutofill"
+        android:layout_marginLeft="0.0dp"
+        android:layout_marginRight="0.0dp"
+        android:layout_toLeftOf="@id/btnAutofill"
+        android:layout_marginTop="110.0dp" />
+
+    <Button
+        android:text="Send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnSend"
+        android:layout_marginLeft="0.0dp"
+        android:layout_marginRight="0.0dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="184.5dp"
+        android:layout_toLeftOf="@id/btnSend" />
+
+</RelativeLayout>
