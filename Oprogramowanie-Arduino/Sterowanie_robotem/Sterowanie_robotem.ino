@@ -30,6 +30,8 @@ void setup() {
 
   analogWrite(PWM_L_PIN, 0);
   analogWrite(PWM_R_PIN, 0);
+  analogReference(INTERNAL);
+  delay(2000);
 }
 
 void go_straight(byte PWM_Speed){
@@ -71,8 +73,8 @@ void get_distance_ground(int &distance1, int &distance2){
   distance2 = analogRead(GROUND_SENSOR2_PIN);
 }
 
-int get_voltage(){
-  return analogRead(VOLTAGE_SENSOR_PIN);
+double get_voltage(){
+  return analogRead(VOLTAGE_SENSOR_PIN)*(1.1/1024.0)*7.5; // dla dzielnika 47k i 6.8k max napiecie 8,7V
 }
 
 bool check_base(){
@@ -102,7 +104,8 @@ void loop() {
   Serial.println(check_base());
   delay(200);
   
-//  if(distL > 900 || distR > 900 || get_distance() > 100 ){
+//  distL > 950 || distR > 950 ||get_distance() > 100 ||
+//  if(  check_base() ==1 ){
 //     go_stop(150);
 //  }else{
 //    go_straight(150);
