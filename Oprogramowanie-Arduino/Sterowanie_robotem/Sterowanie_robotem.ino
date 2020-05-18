@@ -1,4 +1,5 @@
 #include <SoftwareSerial.h>
+#include "ardprintf.h"
 SoftwareSerial RFID(2, 3); // RX, TX
 
 #define PWM_L_PIN 5
@@ -14,6 +15,13 @@ SoftwareSerial RFID(2, 3); // RX, TX
 #define VOLTAGE_SENSOR_PIN A2
 #define GROUND_SENSOR1_PIN A0
 #define GROUND_SENSOR2_PIN A1
+
+#define HEADER "X"
+#define CRC_9 0x31
+
+byte CRC8;
+char pDataFrame[50];
+char buf[50];
 
 void setup() {
   Serial.begin(9600);
@@ -87,6 +95,36 @@ bool check_base(){
   return 0;
 }
 
+byte CRC8_DataArray(byte *pData, byte Len){
+    byte CRC_final = 0xff;
+
+    for(int i = 0; i < Len; ++i){
+        CRC_final = CRC8_SingleByte(CRC_final, pData[i]);
+    }
+return CRC_final;
+}
+
+byte CRC8_SingleByte(byte CRC_prev, byte Data){
+    CRC_prev ^= Data;
+    for(int i = 0; i < 8; ++i){
+        if((CRC_prev & 0x80) != 0){
+            CRC_prev = (byte)((CRC_prev << 1) ^ CRC_9);}
+        else{
+            CRC_prev = (byte)(CRC_prev << 1);}
+    }
+    return CRC_prev;
+}
+
+String readCRC(String pData){
+    pData.substring(0,pData.length()-9).toCharArray(buf, 50);
+    byte t_CRC8 = CRC8_DataArray((unsigned char*)buf, strlen(buf));
+    //Serial.print(pData);  
+    //Serial.println(buf);
+    if(String((int)t_CRC8, HEX) == pData.substring(pData.length()-8,pData.length()-6) && pData.substring(0,1) == String(HEADER)){
+      return pData.substring(2,pData.length()-9);
+    }
+    else return String("Incorrect CRC");
+}
 
 void loop() {
   int distL, distR;
@@ -111,5 +149,10 @@ void loop() {
 //    go_straight(150);
 //  }
 
+/***KOMUNIKACJA Z RPI*****/
+  sprintf(pDataFrame, "%s %d %d", HEADER, 100, -200); //string do wyslania
+  CRC8 = CRC8_DataArray((unsigned char*)pDataFrame, strlen(pDataFrame)); //obliczanie crc8
+  ardprintf("%s %x \r\n", (char*)pDataFrame, (int)CRC8); //wysylanie po uart
+  Serial.println(readCRC(Serial.readString())); //odczyt danych ze stringu w argumencie 
   
 }
