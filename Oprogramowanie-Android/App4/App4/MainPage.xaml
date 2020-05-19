@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="App4.MainPage">
+
+    <StackLayout  HorizontalOptions="CenterAndExpand" VerticalOptions="Center">
+        <!-- Place new controls here -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="110"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            
+            <Label Grid.Row="0"
+                   Grid.ColumnSpan="2"
+                   Text="Hello There!" 
+                   HorizontalOptions="Center"
+                   VerticalOptions="CenterAndExpand" />
+            <Editor Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    HorizontalOptions="Fill"
+                    AutoSize="TextChanges" 
+                    x:Name="txtIp"/>
+            <Editor Grid.Row="2" 
+                    Grid.ColumnSpan="2"
+                    HorizontalOptions="Fill"
+                    AutoSize="TextChanges" 
+                    x:Name="txtPort"/>
+
+            <Button Grid.Row="3" 
+                    HorizontalOptions="CenterAndExpand"
+                    Grid.Column="0"
+                    Text="Autofill" 
+                    Clicked="BtnAutofill_Clicked" 
+                    x:Name="btnAutofill" />
+
+            <Button Grid.Row="3"
+                    HorizontalOptions="CenterAndExpand"
+                    Grid.Column="1"
+                    Text="Connect" 
+                    Clicked="BtnConnect_Clicked" 
+                    x:Name="btnConnect" />
+        </Grid>
+        
+    </StackLayout>
+    
+
+</ContentPage>
