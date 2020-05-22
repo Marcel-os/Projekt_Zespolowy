@@ -19,6 +19,8 @@ SoftwareSerial RFID(2, 3); // RX, TX
 #define HEADER "X"
 #define CRC_9 0x31
 
+#define R_TIME 2
+
 byte CRC8;
 char pDataFrame[50];
 char buf[50];
@@ -70,6 +72,25 @@ void go_stop(byte PWM_Speed){
   digitalWrite(MOTOR_L_PIN2, LOW);
   digitalWrite(MOTOR_R_PIN1, LOW);
   digitalWrite(MOTOR_R_PIN2, LOW);
+}
+
+void rotate(byte PWM_Speed){
+  analogWrite(PWM_L_PIN, PWM_Speed/4);
+  analogWrite(PWM_R_PIN, PWM_Speed/4);
+  
+  //W prawo
+  digitalWrite(MOTOR_L_PIN1, LOW);
+  digitalWrite(MOTOR_L_PIN2, HIGH);
+  digitalWrite(MOTOR_R_PIN1, HIGH);
+  digitalWrite(MOTOR_R_PIN2, LOW);
+  delay(R_TIME*1000);
+
+  //W lewo
+  digitalWrite(MOTOR_L_PIN1, HIGH);
+  digitalWrite(MOTOR_L_PIN2, LOW);
+  digitalWrite(MOTOR_R_PIN1, LOW);
+  digitalWrite(MOTOR_R_PIN2, HIGH);
+  delay(R_TIME*1000);
 }
 
 int get_distance(){
@@ -149,10 +170,12 @@ void loop() {
 //    go_straight(150);
 //  }
 
-/***KOMUNIKACJA Z RPI*****/
-  sprintf(pDataFrame, "%s %d %d", HEADER, 100, -200); //string do wyslania
+  rotate(255);
+  
+ /***KOMUNIKACJA Z RPI*****/
+/*  sprintf(pDataFrame, "%s %d %d", HEADER, 100, -200); //string do wyslania
   CRC8 = CRC8_DataArray((unsigned char*)pDataFrame, strlen(pDataFrame)); //obliczanie crc8
   ardprintf("%s %x \r\n", (char*)pDataFrame, (int)CRC8); //wysylanie po uart
-  Serial.println(readCRC(Serial.readString())); //odczyt danych ze stringu w argumencie 
+  Serial.println(readCRC(Serial.readString())); //odczyt danych ze stringu w argumencie  */
   
 }
