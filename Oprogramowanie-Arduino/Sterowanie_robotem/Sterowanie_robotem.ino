@@ -19,15 +19,46 @@ SoftwareSerial RFID(2, 3); // RX, TX
 #define HEADER "X"
 #define CRC_9 0x31
 
-#define R_TIME 2
+//teoretycznie obrót o 180*
+//#define ROTATE_TIME_R 1.12
+//#define ROTATE_TIME_L 1.26
+
+//teoretycznie obrót o 90*
+//#define ROTATE_TIME_R 0.48
+//#define ROTATE_TIME_L 0.51
+
+//teoretycznie obrót o 45*
+//#define ROTATE_TIME_R 0.14
+//#define ROTATE_TIME_L 0.16
+
+//zaleznosci czas[sekundy](kąt[stopnie])
+//przyblożone na podst 3pkt -> niedokładne XD
+// ROTATE_TIME_R = (0.0072* KĄT - 0.18)
+// ROTATE_TIME_L = (00082* KĄT - 0.215)
+
+#define FAST_START_PWM 240
 
 byte CRC8;
 char pDataFrame[50];
 char buf[50];
+bool TIMER2_FLAG = 0;
 
 void setup() {
+
+//przerwanie z timera2 co 2kHz
+  TCCR2A = 0;
+  TCCR2B = 0;
+  TCNT2  = 0;
+  OCR2A = 255;
+  TCCR2A |= (1 << WGM21);
+  TCCR2B |= (1 << CS21);   
+  TIMSK2 |= (1 << OCIE2A);
+  
   Serial.begin(9600);
   RFID.begin(9600);
+
+  pinMode(13, OUTPUT);
+  
   pinMode(MOTOR_L_PIN1, OUTPUT);
   pinMode(MOTOR_L_PIN2, OUTPUT);
   pinMode(MOTOR_R_PIN1, OUTPUT);
@@ -42,55 +73,106 @@ void setup() {
   analogWrite(PWM_R_PIN, 0);
   analogReference(INTERNAL);
   delay(2000);
+  sei();
 }
 
-void go_straight(byte PWM_Speed){
-  analogWrite(PWM_L_PIN, PWM_Speed);
-  analogWrite(PWM_R_PIN, PWM_Speed);
+//funkscja przerwania co 2kHz
+ISR(TIMER2_COMPA_vect){
+  TIMER2_FLAG = 1;
+//  int distL, distR; 
+//  get_distance_ground(distL, distR);
+//  if( analogRead(DISTANCE_SENSOR_PIN) > 700){
+//  go_stop();
+// }
+}
 
+void go_straight(){
+  //na chwilę duży PWM, żeby ładnie wystrartował
+  //przy mnijszym pwm jeden silnik za wolno startuje
+  //co powoduje skręcanie
+  analogWrite(PWM_L_PIN, FAST_START_PWM);
+  analogWrite(PWM_R_PIN, FAST_START_PWM-4);
   digitalWrite(MOTOR_L_PIN1, LOW);
   digitalWrite(MOTOR_L_PIN2, HIGH);
   digitalWrite(MOTOR_R_PIN1, LOW);
   digitalWrite(MOTOR_R_PIN2, HIGH);
-}
-
-void go_back(byte PWM_Speed){
-  analogWrite(PWM_L_PIN, PWM_Speed);
-  analogWrite(PWM_R_PIN, PWM_Speed);
-
-  digitalWrite(MOTOR_L_PIN1, HIGH);
-  digitalWrite(MOTOR_L_PIN2, LOW);
-  digitalWrite(MOTOR_R_PIN1, HIGH);
-  digitalWrite(MOTOR_R_PIN2, LOW);
-}
-
-void go_stop(byte PWM_Speed){
-  analogWrite(PWM_L_PIN, PWM_Speed);
-  analogWrite(PWM_R_PIN, PWM_Speed);
-
-  digitalWrite(MOTOR_L_PIN1, LOW);
-  digitalWrite(MOTOR_L_PIN2, LOW);
-  digitalWrite(MOTOR_R_PIN1, LOW);
-  digitalWrite(MOTOR_R_PIN2, LOW);
-}
-
-void rotate(byte PWM_Speed){
-  analogWrite(PWM_L_PIN, PWM_Speed/4);
-  analogWrite(PWM_R_PIN, PWM_Speed/4);
   
-  //W prawo
-  digitalWrite(MOTOR_L_PIN1, LOW);
-  digitalWrite(MOTOR_L_PIN2, HIGH);
+  delay(100);
+  
+  analogWrite(PWM_L_PIN, 150);
+  analogWrite(PWM_R_PIN, 150-15);
+}
+
+void go_back(){
+  //na chwilę duży PWM, żeby ładnie wystrartował
+  //przy mnijszym pwm jeden silnik za wolno startuje
+  //co powoduje skręcanie
+  analogWrite(PWM_L_PIN, FAST_START_PWM);
+  analogWrite(PWM_R_PIN, FAST_START_PWM-4);
+  digitalWrite(MOTOR_L_PIN1, HIGH);
+  digitalWrite(MOTOR_L_PIN2, LOW);
   digitalWrite(MOTOR_R_PIN1, HIGH);
   digitalWrite(MOTOR_R_PIN2, LOW);
-  delay(R_TIME*1000);
+  
+  delay(100);
+  
+  analogWrite(PWM_L_PIN, 150);
+  analogWrite(PWM_R_PIN, 150-15);
+}
 
-  //W lewo
+void go_stop(){
+  analogWrite(PWM_L_PIN, 255);
+  analogWrite(PWM_R_PIN, 255);
+
+  digitalWrite(MOTOR_L_PIN1, LOW);
+  digitalWrite(MOTOR_L_PIN2, LOW);
+  digitalWrite(MOTOR_R_PIN1, LOW);
+  digitalWrite(MOTOR_R_PIN2, LOW);
+  delay(300);
+}
+
+void rotateR(byte angle){
+  //na chwilę duży PWM, żeby ładnie wystrartował
+  //przy mnijszym pwm jeden silnik za wolno startuje
+  //co powoduje skręcanie
+  analogWrite(PWM_L_PIN, FAST_START_PWM);
+  analogWrite(PWM_R_PIN, FAST_START_PWM);
+   //W prawo
   digitalWrite(MOTOR_L_PIN1, HIGH);
   digitalWrite(MOTOR_L_PIN2, LOW);
   digitalWrite(MOTOR_R_PIN1, LOW);
   digitalWrite(MOTOR_R_PIN2, HIGH);
-  delay(R_TIME*1000);
+
+  delay(100);
+  
+  analogWrite(PWM_L_PIN, 100);
+  analogWrite(PWM_R_PIN, 100);
+  
+  double ROTATE_TIME_R = 0.0072* angle - 0.18;
+  if(ROTATE_TIME_R < 0) ROTATE_TIME_R == 0;
+  delay( ROTATE_TIME_R*1000);
+}
+
+void rotateL(byte angle){
+  //na chwilę duży PWM, żeby ładnie wystrartował
+  //przy mnijszym pwm jeden silnik za wolno startuje
+  //co powoduje skręcanie
+  analogWrite(PWM_L_PIN, FAST_START_PWM);
+  analogWrite(PWM_R_PIN, FAST_START_PWM);
+  //W lewo
+  digitalWrite(MOTOR_L_PIN1, LOW);
+  digitalWrite(MOTOR_L_PIN2, HIGH);
+  digitalWrite(MOTOR_R_PIN1, HIGH);
+  digitalWrite(MOTOR_R_PIN2, LOW);
+  
+  delay(100);
+
+  analogWrite(PWM_L_PIN, 100);
+  analogWrite(PWM_R_PIN, 100);
+  
+  double ROTATE_TIME_L = 0.0082 * angle - 0.215;
+  if(ROTATE_TIME_L < 0) ROTATE_TIME_L == 0;
+  delay( ROTATE_TIME_L*1000);
 }
 
 int get_distance(){
@@ -148,29 +230,64 @@ String readCRC(String pData){
 }
 
 void loop() {
-  int distL, distR;
-  get_distance_ground(distL, distR);
+  //proste odbijanie się od ścian
+    if(get_distance() > 600){
+      go_stop();
+      go_back();
+      delay(1000);
+      go_stop();
+      rotateR(90);
+      go_stop();
+    }else go_straight();
 
-  Serial.print("lewy czujnik podloza: ");
-  Serial.print(distL);
-  Serial.print(" prawy czujnik podloza: ");
-  Serial.print(distR);
-  Serial.print(" czujnik odleglosci: ");
-  Serial.print(get_distance());
-  Serial.print(" napiecie baterii: ");
-  Serial.print(get_voltage());
-  Serial.print(" wykrycie bazy: ");
-  Serial.println(check_base());
-  delay(200);
+
   
-//  distL > 950 || distR > 950 ||get_distance() > 100 ||
-//  if(  check_base() ==1 ){
-//     go_stop(150);
-//  }else{
-//    go_straight(150);
-//  }
+//****************************************************NIE KASOWAĆ BEGIN
+//
+//  int distL, distR;
+//  get_distance_ground(distL, distR);
+//
+//  Serial.print("lewy czujnik podloza: ");
+//  Serial.print(distL);
+//  Serial.print(" prawy czujnik podloza: ");
+//  Serial.print(distR);
+//  Serial.print(" czujnik odleglosci: ");
+//  Serial.print(get_distance());
+//  Serial.print(" napiecie baterii: ");
+//  Serial.print(get_voltage());
+//  Serial.print(" wykrycie bazy: ");
+//  Serial.println(check_base());
+//  delay(200);
 
-  rotate(255);
+//  go_straight();
+//  delay(2000);
+//  go_stop(); //hard breaking - go_stop(255), easy breaking - go_stop(0)
+//  rotateL(90);
+//  go_stop();
+//
+//  go_straight();
+//  delay(2000);
+//  go_stop(); //hard breaking - go_stop(255), easy breaking - go_stop(0)
+//  rotateR(90);
+//  go_stop();
+  
+  //go_straight();
+  
+//  delay(2000);
+//  rotateL(100);
+  
+  //distL > 950 || distR > 950 ||get_distance() > 100 ||
+//  if(  get_distance() > 700){
+//     rotateR(100);
+//     delay(500);
+//  }
+//  go_straight(150);
+//  delay(1000);
+  //delay(100);
+
+ // rotate(255);
+
+ //****************************************************NIE KASOWAĆ END
   
  /***KOMUNIKACJA Z RPI*****/
 /*  sprintf(pDataFrame, "%s %d %d", HEADER, 100, -200); //string do wyslania
