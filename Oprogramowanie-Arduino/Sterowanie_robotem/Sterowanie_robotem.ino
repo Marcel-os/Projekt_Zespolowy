@@ -230,15 +230,37 @@ String readCRC(String pData){
 }
 
 void loop() {
+  //proste wykonywanie poleceń
+  byte inByte[3] = {'0','0','0'};
+  Serial.readBytes(inByte, 3);
+  if(inByte[0]== '0' && inByte[1]== '\r' && inByte[2]=='\n' ){
+    go_stop();
+  }
+  if(inByte[0]== '1' && inByte[1]== '\r' && inByte[2]=='\n' ){
+    go_straight();
+  }
+  if(inByte[0]== '2' && inByte[1]== '\r' && inByte[2]=='\n' ){
+    go_back();
+  }
+  if(inByte[0]== '3' && inByte[1]== '\r' && inByte[2]=='\n' ){
+    rotateR(90);
+  }
+  if(inByte[0]== '4' && inByte[1]== '\r' && inByte[2]=='\n' ){
+    rotateL(90);
+  }
+  delay(50);
+  
+
+  
   //proste odbijanie się od ścian
-    if(get_distance() > 600){
-      go_stop();
-      go_back();
-      delay(1000);
-      go_stop();
-      rotateR(90);
-      go_stop();
-    }else go_straight();
+//    if(get_distance() > 600){
+//      go_stop();
+//      go_back();
+//      delay(1000);
+//      go_stop();
+//      rotateR(90);
+//      go_stop();
+//    }else go_straight();
 
 
   
