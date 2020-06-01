@@ -248,7 +248,21 @@ void loop() {
   if(inByte[0]== '4' && inByte[1]== '\r' && inByte[2]=='\n' ){
     rotateL(90);
   }
-  delay(50);
+  int distL, distR;
+  get_distance_ground(distL, distR);
+
+  
+  Serial.print("S "); //lewy czujnik podloza
+  Serial.print(distL);
+  Serial.print(" "); //prawy czujnik podloza
+  Serial.print(distR);
+  Serial.print(" "); //czujnik odleglosci
+  Serial.print(get_distance());
+  Serial.print(" "); //napiecie baterii
+  Serial.print(get_voltage());
+  Serial.print(" "); //wykrycie bazy
+  Serial.println(check_base());
+  //delay(50);
   
 
   
