@@ -33,7 +33,6 @@ namespace Program
                 Console.Write(existingData);
                 if (!existingData.Contains('\n') && !existingData.Contains('\r'))
                 {
-                    // we didn't get the response yet, let's wait for it then
                     try
                     {
                         Console.WriteLine(uart.ReadLine());
