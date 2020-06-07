@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -22,22 +21,6 @@ namespace App4
 
             serverStream = sStream;
             clientSocket = cSocket;
-        }
-
-        private async void BtnSend_Clicked(object sender, EventArgs e)
-        {
-            if (clientSocket.Connected)
-            {
-                byte[] outstream = Encoding.ASCII.GetBytes("hej");
-
-                serverStream.Write(outstream, 0, outstream.Length);
-                serverStream.Flush();
-            }
-            else
-            {
-                await DisplayAlert("Error", "Not connected", "OK");
-                await Navigation.PopModalAsync();
-            }
         }
 
         private async void BtnDisconnect_Clicked(object sender, EventArgs e)
@@ -92,6 +75,47 @@ namespace App4
                 btnDown.IsVisible = false;
                 btnLeft.IsVisible = false;
                 btnRight.IsVisible = false;
+            }
+        }
+
+        private void BtnUp_Clicked(object sender, EventArgs e)
+        {
+            SendCommand("up");
+        }
+
+        private void BtnDown_Clicked(object sender, EventArgs e)
+        {
+            SendCommand("down");
+        }
+
+        private void BtnLeft_Clicked(object sender, EventArgs e)
+        {
+            SendCommand("left");
+        }
+
+        private void BtnRight_Clicked(object sender, EventArgs e)
+        {
+            SendCommand("right");
+        }
+
+        private void BtnStop_Clicked(object sender, EventArgs e)
+        {
+            SendCommand("stop");
+        }
+
+        private async void SendCommand(string command)
+        {
+            if (clientSocket.Connected)
+            {
+                byte[] outstream = Encoding.ASCII.GetBytes(command);
+
+                serverStream.Write(outstream, 0, outstream.Length);
+                serverStream.Flush();
+            }
+            else
+            {
+                await DisplayAlert("Error", "Not connected", "OK");
+                await Navigation.PopModalAsync();
             }
         }
     }

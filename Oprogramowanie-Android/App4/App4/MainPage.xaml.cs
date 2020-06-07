@@ -25,7 +25,7 @@ namespace App4
 
         private void BtnAutofill_Clicked(object sender, EventArgs e)
         {
-            txtIp.Text = "192.168.8.122";
+            txtIp.Text = "192.168.1.18";
             txtPort.Text = "8080";
         }
 
