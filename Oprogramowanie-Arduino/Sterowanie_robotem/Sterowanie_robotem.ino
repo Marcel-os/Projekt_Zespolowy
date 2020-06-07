@@ -151,6 +151,8 @@ void rotateR(byte angle){
   double ROTATE_TIME_R = 0.0072* angle - 0.18;
   if(ROTATE_TIME_R < 0) ROTATE_TIME_R == 0;
   delay( ROTATE_TIME_R*1000);
+  go_stop();
+  Serial.print("3\r\n");
 }
 
 void rotateL(byte angle){
@@ -173,6 +175,8 @@ void rotateL(byte angle){
   double ROTATE_TIME_L = 0.0082 * angle - 0.215;
   if(ROTATE_TIME_L < 0) ROTATE_TIME_L == 0;
   delay( ROTATE_TIME_L*1000);
+  go_stop();
+  Serial.print("4\r\n");
 }
 
 int get_distance(){
