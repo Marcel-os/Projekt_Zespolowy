@@ -43,6 +43,10 @@ char pDataFrame[50];
 char buf[50];
 bool TIMER2_FLAG = 0;
 
+int timer1 = 0;
+bool flag1 = false;
+int timer2 = 0;
+
 void setup() {
 
 //przerwanie z timera2 co 2kHz
@@ -54,7 +58,7 @@ void setup() {
   TCCR2B |= (1 << CS21);   
   TIMSK2 |= (1 << OCIE2A);
   
-  Serial.begin(9600);
+  Serial.begin(115200);
   RFID.begin(9600);
 
   pinMode(13, OUTPUT);
@@ -128,7 +132,7 @@ void go_stop(){
   digitalWrite(MOTOR_L_PIN2, LOW);
   digitalWrite(MOTOR_R_PIN1, LOW);
   digitalWrite(MOTOR_R_PIN2, LOW);
-  delay(300);
+  delay(100);
 }
 
 void rotateR(byte angle){
@@ -142,17 +146,19 @@ void rotateR(byte angle){
   digitalWrite(MOTOR_L_PIN2, LOW);
   digitalWrite(MOTOR_R_PIN1, LOW);
   digitalWrite(MOTOR_R_PIN2, HIGH);
-
-  delay(100);
+  delay(50);
   
   analogWrite(PWM_L_PIN, 100);
   analogWrite(PWM_R_PIN, 100);
-  
+
+  if(!flag1) timer1 = millis();
   double ROTATE_TIME_R = 0.0072* angle - 0.18;
   if(ROTATE_TIME_R < 0) ROTATE_TIME_R == 0;
-  delay( ROTATE_TIME_R*1000);
-  go_stop();
-  Serial.print("3\r\n");
+  if(millis() - timer1 >= ROTATE_TIME_R*1000){
+    go_stop();
+    flag1 = false;
+    Serial.print("3\r\n");
+  }
 }
 
 void rotateL(byte angle){
@@ -201,7 +207,7 @@ bool check_base(){
   }
   return 0;
 }
-
+/*
 byte CRC8_DataArray(byte *pData, byte Len){
     byte CRC_final = 0xff;
 
@@ -232,7 +238,7 @@ String readCRC(String pData){
     }
     else return String("Incorrect CRC");
 }
-
+*/
 void loop() {
   //proste wykonywanie poleceń
   byte inByte[3] = {'0','0','0'};
@@ -255,19 +261,20 @@ void loop() {
   int distL, distR;
   get_distance_ground(distL, distR);
 
-  
-  Serial.print("S "); //lewy czujnik podloza
-  Serial.print(distL);
-  Serial.print(" "); //prawy czujnik podloza
-  Serial.print(distR);
-  Serial.print(" "); //czujnik odleglosci
-  Serial.print(get_distance());
-  Serial.print(" "); //napiecie baterii
-  Serial.print(get_voltage());
-  Serial.print(" "); //wykrycie bazy
-  Serial.println(check_base());
-  //delay(50);
-  
+
+  if(millis() - timer2 >= 100){
+    Serial.print("S "); //lewy czujnik podloza
+    Serial.print(distL);
+    Serial.print(" "); //prawy czujnik podloza
+    Serial.print(distR);
+    Serial.print(" "); //czujnik odleglosci
+    Serial.print(get_distance());
+    Serial.print(" "); //napiecie baterii
+    Serial.print(get_voltage());
+    Serial.print(" "); //wykrycie bazy
+    Serial.println(check_base());
+    timer2 = millis();
+  }
 
   
   //proste odbijanie się od ścian
