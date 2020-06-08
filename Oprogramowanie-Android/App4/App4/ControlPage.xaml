@@ -22,11 +22,6 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
-        <Button x:Name="btnSend" 
-                    Grid.Column="2"
-                    Grid.Row="4"
-                    Text="Send"
-                    Clicked="BtnSend_Clicked"/>
         <Button x:Name="btnDisconnect" 
                     Grid.Column="2"
                     Grid.Row="5"
@@ -50,25 +45,36 @@
                 Grid.Row="0"
                 Text="Up"
                 HorizontalOptions="Center"
-                VerticalOptions="End"/>
+                VerticalOptions="End"
+                Clicked="BtnUp_Clicked"/>
         <Button x:Name="btnDown"
                 Grid.Column="1"
                 Grid.Row="2"
                 Text="Down"
                 HorizontalOptions="Center"
-                VerticalOptions="Start"/>
+                VerticalOptions="Start"
+                Clicked="BtnDown_Clicked"/>
+        <Button x:Name="btnStop"
+                Grid.Column="1"
+                Grid.Row="1"
+                Text="Stop"
+                HorizontalOptions="Center"
+                VerticalOptions="Fill"
+                Clicked="BtnStop_Clicked"/>
         <Button x:Name="btnLeft"
                 Grid.Column="0"
                 Grid.Row="1"
                 Text="Left"
                 HorizontalOptions="End"
-                VerticalOptions="Center"/>
+                VerticalOptions="Center"
+                Clicked="BtnLeft_Clicked"/>
         <Button x:Name="btnRight"
                 Grid.Column="2"
                 Grid.Row="1"
                 Text="Right"
                 HorizontalOptions="Start"
-                VerticalOptions="Center"/>
+                VerticalOptions="Center"
+                Clicked="BtnRight_Clicked"/>
     </Grid>
 
 </ContentPage>
