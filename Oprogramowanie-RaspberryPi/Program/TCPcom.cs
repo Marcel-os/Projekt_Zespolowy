@@ -11,11 +11,16 @@ namespace Program
     class TCPcom
     {
         private static TcpListener listener;
+        AutomaticControl autoCont = new AutomaticControl();
+        UARTcom uart = new UARTcom();
 
         public void Connection()
         {
             listener = new TcpListener(IPAddress.Any, 8080);
             listener.Start();
+
+            AutomaticControl autoCont = new AutomaticControl();
+            
 
             Console.WriteLine("Listening...");
 
@@ -25,6 +30,9 @@ namespace Program
 
                 NetworkStream stream = client.GetStream();
 
+                var th = new Thread(autoCont.Control);
+                th.IsBackground = true;
+
                 while (true)
                 {
                     if (stream.DataAvailable)
@@ -33,9 +41,11 @@ namespace Program
 
                         string data = Encoding.UTF8.GetString(received);
 
-                        EventHandler(data);
+                        EventHandler(data, th);
                         
                         Console.WriteLine("Received: " + data);
+
+                        
                     }
                     else
                         Thread.Sleep(1);
@@ -61,9 +71,13 @@ namespace Program
             return received.ToArray();
         }
 
-        private void EventHandler(string command)
+        private void EventHandler(string command, Thread th)
         {
-            UARTcom uart = new UARTcom();
+            
+            //uart.Sensors();
+            /*AutomaticControl autoCont = new AutomaticControl();
+            var th = new Thread(autoCont.Control);
+            th.IsBackground = true;*/
 
             switch (command)
             {
@@ -81,6 +95,21 @@ namespace Program
                     break;
                 case "left":
                     uart.Communication("4\r\n");
+                    break;
+                case "auto":
+                    th.Start();
+                    break;
+                case "manual":
+                    Console.WriteLine("cut");
+                    th.Interrupt();
+                    Console.WriteLine("cut 2");
+                    autoCont.SleepSwitch = true;
+                    //uart.SleepSwitchua = true;
+                    //uart.Communication("0\r\n");
+                    Console.WriteLine("cut 3");
+                    th.Join();
+                    Console.WriteLine("cut 4");
+                    Console.WriteLine("Is auto con alive: " + th.IsAlive.ToString());
                     break;
                 default:
                     break;
