@@ -47,6 +47,7 @@ int timer1 = 0;
 bool flag1 = false;
 int timer2 = 0;
 
+
 void setup() {
 
 //przerwanie z timera2 co 2kHz
@@ -242,21 +243,23 @@ String readCRC(String pData){
 void loop() {
   //proste wykonywanie poleceń
   byte inByte[3] = {'0','0','0'};
-  Serial.readBytes(inByte, 3);
-  if(inByte[0]== '0' && inByte[1]== '\r' && inByte[2]=='\n' ){
-    go_stop();
-  }
-  if(inByte[0]== '1' && inByte[1]== '\r' && inByte[2]=='\n' ){
-    go_straight();
-  }
-  if(inByte[0]== '2' && inByte[1]== '\r' && inByte[2]=='\n' ){
-    go_back();
-  }
-  if(inByte[0]== '3' && inByte[1]== '\r' && inByte[2]=='\n' ){
-    rotateR(90);
-  }
-  if(inByte[0]== '4' && inByte[1]== '\r' && inByte[2]=='\n' ){
-    rotateL(90);
+  if(Serial.available()){
+    Serial.readBytes(inByte, 3);
+    if(inByte[0]== '0' && inByte[1]== '\r' && inByte[2]=='\n' ){
+      go_stop();
+    }
+    if(inByte[0]== '1' && inByte[1]== '\r' && inByte[2]=='\n' ){
+      go_straight();
+    }
+    if(inByte[0]== '2' && inByte[1]== '\r' && inByte[2]=='\n' ){
+      go_back();
+    }
+    if(inByte[0]== '3' && inByte[1]== '\r' && inByte[2]=='\n' ){
+      rotateR(90);
+    }
+    if(inByte[0]== '4' && inByte[1]== '\r' && inByte[2]=='\n' ){
+      rotateL(90);
+    }
   }
   int distL, distR;
   get_distance_ground(distL, distR);
