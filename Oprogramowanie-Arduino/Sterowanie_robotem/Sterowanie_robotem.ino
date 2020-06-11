@@ -59,7 +59,7 @@ void setup() {
   TCCR2B |= (1 << CS21);   
   TIMSK2 |= (1 << OCIE2A);
   
-  Serial.begin(115200);
+  Serial.begin(57600);
   RFID.begin(9600);
 
   pinMode(13, OUTPUT);
@@ -152,14 +152,12 @@ void rotateR(byte angle){
   analogWrite(PWM_L_PIN, 100);
   analogWrite(PWM_R_PIN, 100);
 
-  if(!flag1) timer1 = millis();
   double ROTATE_TIME_R = 0.0072* angle - 0.18;
   if(ROTATE_TIME_R < 0) ROTATE_TIME_R == 0;
-  if(millis() - timer1 >= ROTATE_TIME_R*1000){
-    go_stop();
-    flag1 = false;
-    Serial.print("3\r\n");
-  }
+  delay(ROTATE_TIME_R*1000);
+  go_stop();
+  flag1 = false;
+  Serial.print("3\r\n");
 }
 
 void rotateL(byte angle){
@@ -181,7 +179,7 @@ void rotateL(byte angle){
   
   double ROTATE_TIME_L = 0.0082 * angle - 0.215;
   if(ROTATE_TIME_L < 0) ROTATE_TIME_L == 0;
-  delay( ROTATE_TIME_L*1000);
+  delay(ROTATE_TIME_L*1000);
   go_stop();
   Serial.print("4\r\n");
 }
