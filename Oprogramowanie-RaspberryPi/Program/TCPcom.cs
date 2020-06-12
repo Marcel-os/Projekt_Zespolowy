@@ -100,15 +100,11 @@ namespace Program
                     th.Start();
                     break;
                 case "manual":
-                    Console.WriteLine("cut");
                     th.Interrupt();
-                    Console.WriteLine("cut 2");
                     autoCont.SleepSwitch = true;
                     //uart.SleepSwitchua = true;
                     //uart.Communication("0\r\n");
-                    Console.WriteLine("cut 3");
                     th.Join();
-                    Console.WriteLine("cut 4");
                     Console.WriteLine("Is auto con alive: " + th.IsAlive.ToString());
                     break;
                 default:

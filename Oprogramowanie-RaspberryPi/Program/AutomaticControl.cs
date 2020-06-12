@@ -17,24 +17,43 @@ namespace Program
         public void Control()
         {
 
-            var th = new Thread(Sensors);
+            /*var th = new Thread(Sensors);
             th.IsBackground = true;
-            th.Start();
-            Thread.Sleep(2000);
+            th.Start();*/
+            //Thread.Sleep(4000);
 
-            ReadSensors();
+            Chauffeur(/*th*/);
         }
 
-        private void ReadSensors()
+        private void Chauffeur(/*Thread th*/)
         {
+            string straight = "1\r\n", left = "4\r\n", right = "3\r\n", stop = "0\r\n";
+            bool[] direction = { false, false, false, false };
             while (!sleepSwitch)
             {
+                Sensors();
+                
                 Console.WriteLine("Left Ground:  " + lGround.ToString()  + "\n" +
                                   "Right Ground: " + rGround.ToString()  + "\n" +
                                   "Front:        " + front.ToString()    + "\n" +
                                   "Battery:      " + battery.ToString()  + "\n" +
                                   "Is docked:    " + isDocked.ToString() + "\n" );
-                Thread.Sleep(1000);
+
+                if (front < 1000 && direction[0] == false)
+                {
+                    while( Communication(straight) == false) { Thread.Sleep(20); }
+                    direction[0] = true;
+                }
+                    
+                if (front > 1000 && direction[0] == true)
+                {
+                    while(Communication(stop) == false) { Thread.Sleep(20); }
+                    //Communication(stop);
+                    direction[0] = false;
+                    Thread.Sleep(4000);
+                    while (Communication(left) == false) { Thread.Sleep(20); }
+                    Thread.Sleep(100);
+                }
             }
             try
             {

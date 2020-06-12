@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
+using System.Threading;
 
 namespace Program
 {
@@ -13,86 +14,80 @@ namespace Program
         public float battery = 0;
         public bool isDocked = false;
 
-        /*bool sleepSwitchua = false;
+        static string portName = "/dev/ttyS0";
+        int baudRate = 115200;
+        SerialPort uart = new SerialPort(portName);
 
-        public bool SleepSwitchua
+        public bool Communication(string command)
         {
-            set { sleepSwitchua = value; }
-        }*/
 
-        public void Communication(string command)
-        {
-            string portName = "/dev/ttyS0";
-            int baudRate = 9600;
-
-            using (SerialPort uart = new SerialPort(portName))
-            {
-                uart.Encoding = Encoding.UTF8;
-                uart.BaudRate = baudRate;
-                uart.ReadTimeout = 1000;
-                uart.WriteTimeout = 1000;
+            uart.Encoding = Encoding.UTF8;
+            uart.BaudRate = baudRate;
+            uart.ReadTimeout = 1;
+            uart.WriteTimeout = 1000;
+            if (uart.IsOpen == false)
                 uart.Open();
 
+            try
+            {
+                uart.WriteLine(command);
+                return true;
+            }
+            catch (TimeoutException)
+            {
+                Console.WriteLine("ERROR: Sending command timed out");
+                return false;
+            }
+
+            /*string existingData = uart.ReadExisting();
+            Console.Write(existingData);
+            if (!existingData.Contains('\n') && !existingData.Contains('\r'))
+            {
                 try
                 {
-                    uart.WriteLine(command);
+                    Console.WriteLine(uart.ReadLine());
                 }
                 catch (TimeoutException)
                 {
-                    Console.WriteLine("ERROR: Sending command timed out");
+                    Console.WriteLine($"ERROR: No response in {uart.ReadTimeout}ms.");
+                    //Communication(command);
                 }
+            }*/
 
-                string existingData = uart.ReadExisting();
-                Console.Write(existingData);
-                if (!existingData.Contains('\n') && !existingData.Contains('\r'))
-                {
-                    try
-                    {
-                        Console.WriteLine(uart.ReadLine());
-                    }
-                    catch (TimeoutException)
-                    {
-                        Console.WriteLine($"ERROR: No response in {uart.ReadTimeout}ms.");
-                    }
-                }
-            }
         }
 
         public void Sensors()
         {
-            string portName = "/dev/ttyS0";
-            int baudRate = 9600;
-
-            using (SerialPort uart = new SerialPort(portName))
-            {
-                uart.Encoding = Encoding.UTF8;
-                uart.BaudRate = baudRate;
-                uart.ReadTimeout = 4000;
-                uart.WriteTimeout = 1000;
+            uart.Encoding = Encoding.UTF8;
+            uart.BaudRate = baudRate;
+            uart.ReadTimeout = 2000;
+            uart.WriteTimeout = 1;
+            if (uart.IsOpen == false)
                 uart.Open();
+           
+            try
+            {
+                string sensors = uart.ReadLine();
+                //Console.WriteLine(sensors);
+                string[] sensorsArray = sensors.Split(' ');
+                lGround = int.Parse(sensorsArray[1]);
+                rGround = int.Parse(sensorsArray[2]);
+                front = int.Parse(sensorsArray[3]);
+                battery = float.Parse(sensorsArray[4]);
+                isDocked = Convert.ToBoolean(int.Parse(sensorsArray[5]));
 
-                while (true)
-                {
-                    try
-                    {
-                        string sensors = uart.ReadLine();
-                        //Console.WriteLine(sensors);
-                        string[] sensorsArray = sensors.Split(' ');
-                        lGround = int.Parse(sensorsArray[1]);
-                        rGround = int.Parse(sensorsArray[2]);
-                        front = int.Parse(sensorsArray[3]);
-                        battery = float.Parse(sensorsArray[4]);
-                        isDocked = Convert.ToBoolean(int.Parse(sensorsArray[5]));
-                    }
-                    catch (TimeoutException)
-                    {
-                        Console.WriteLine($"ERROR: No response in {uart.ReadTimeout}ms.");
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        Console.WriteLine("Index out of bounds");
-                    }
-                }
+            }
+            catch (TimeoutException)
+            {
+                Console.WriteLine($"ERROR: No response in {uart.ReadTimeout}ms.");
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("Index out of bounds");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("err");
             }
         }
     }
