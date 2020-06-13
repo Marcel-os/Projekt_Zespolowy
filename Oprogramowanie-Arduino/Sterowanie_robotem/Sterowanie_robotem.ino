@@ -59,7 +59,7 @@ void setup() {
   TCCR2B |= (1 << CS21);   
   TIMSK2 |= (1 << OCIE2A);
   
-  Serial.begin(57600);
+  Serial.begin(115200);
   RFID.begin(9600);
 
   pinMode(13, OUTPUT);
@@ -238,6 +238,19 @@ String readCRC(String pData){
     else return String("Incorrect CRC");
 }
 */
+
+void autopilot(){
+  /*
+  distL - lewy czujnik podłoza (jeśli jest wieksze niz 1000 to jest krawedz
+  distR - prawy czujnik podloza
+  ktorys z tych czujnikow podloza nie dziala wiec ich moze nie uzywaj
+
+  get_distance() - czujnik z przodu
+  check_base() - czy jest w stacji dokowania
+  */
+  while(true){delay(100);}
+}
+
 void loop() {
   //proste wykonywanie poleceń
   byte inByte[3] = {'0','0','0'};
@@ -257,6 +270,12 @@ void loop() {
     }
     if(inByte[0]== '4' && inByte[1]== '\r' && inByte[2]=='\n' ){
       rotateL(90);
+    }
+    if(inByte[0]== '5' && inByte[1]== '\r' && inByte[2]=='\n' ){
+      autopilot();
+    }
+    if(inByte[0]== '6' && inByte[1]== '\r' && inByte[2]=='\n' ){
+      //jakies przerwanie autopilota
     }
   }
   int distL, distR;

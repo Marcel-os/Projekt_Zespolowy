@@ -64,30 +64,32 @@ namespace Program
             uart.WriteTimeout = 1;
             if (uart.IsOpen == false)
                 uart.Open();
-           
-            try
+            while (true)
             {
-                string sensors = uart.ReadLine();
-                //Console.WriteLine(sensors);
-                string[] sensorsArray = sensors.Split(' ');
-                lGround = int.Parse(sensorsArray[1]);
-                rGround = int.Parse(sensorsArray[2]);
-                front = int.Parse(sensorsArray[3]);
-                battery = float.Parse(sensorsArray[4]);
-                isDocked = Convert.ToBoolean(int.Parse(sensorsArray[5]));
+                try
+                {
+                    string sensors = uart.ReadLine();
+                    Console.WriteLine(sensors);
+                    string[] sensorsArray = sensors.Split(' ');
+                    lGround = int.Parse(sensorsArray[1]);
+                    rGround = int.Parse(sensorsArray[2]);
+                    front = int.Parse(sensorsArray[3]);
+                    battery = float.Parse(sensorsArray[4]);
+                    isDocked = Convert.ToBoolean(int.Parse(sensorsArray[5]));
 
-            }
-            catch (TimeoutException)
-            {
-                Console.WriteLine($"ERROR: No response in {uart.ReadTimeout}ms.");
-            }
-            catch (IndexOutOfRangeException)
-            {
-                Console.WriteLine("Index out of bounds");
-            }
-            catch (FormatException)
-            {
-                Console.WriteLine("err");
+                }
+                catch (TimeoutException)
+                {
+                    Console.WriteLine($"ERROR: No response in {uart.ReadTimeout}ms.");
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    Console.WriteLine("Index out of bounds");
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("err");
+                }
             }
         }
     }

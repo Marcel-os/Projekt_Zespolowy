@@ -30,7 +30,8 @@ namespace Program
 
                 NetworkStream stream = client.GetStream();
 
-                var th = new Thread(autoCont.Control);
+                //var th = new Thread(autoCont.Control);
+                var th = new Thread(uart.Sensors);
                 th.IsBackground = true;
 
                 while (true)
@@ -97,9 +98,12 @@ namespace Program
                     uart.Communication("4\r\n");
                     break;
                 case "auto":
+                    uart.Communication("5\r\n");
+                    Thread.Sleep(3000);
                     th.Start();
                     break;
                 case "manual":
+                    uart.Communication("6\r\n");
                     th.Interrupt();
                     autoCont.SleepSwitch = true;
                     //uart.SleepSwitchua = true;

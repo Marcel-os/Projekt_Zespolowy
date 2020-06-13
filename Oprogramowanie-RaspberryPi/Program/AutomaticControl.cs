@@ -16,11 +16,9 @@ namespace Program
 
         public void Control()
         {
+           /* Kinectcom kinect = new Kinectcom();
+            kinect.init();*/
 
-            /*var th = new Thread(Sensors);
-            th.IsBackground = true;
-            th.Start();*/
-            //Thread.Sleep(4000);
 
             Chauffeur(/*th*/);
         }
@@ -39,21 +37,23 @@ namespace Program
                                   "Battery:      " + battery.ToString()  + "\n" +
                                   "Is docked:    " + isDocked.ToString() + "\n" );
 
-                if (front < 1000 && direction[0] == false)
+                /*if (front < 1000 && direction[0] == false)
                 {
                     while( Communication(straight) == false) { Thread.Sleep(20); }
                     direction[0] = true;
                 }
                     
-                if (front > 1000 && direction[0] == true)
+                if (front > 1000)
                 {
-                    while(Communication(stop) == false) { Thread.Sleep(20); }
-                    //Communication(stop);
-                    direction[0] = false;
-                    Thread.Sleep(4000);
+                    if(direction[0] == true)
+                    {
+                        while (Communication(stop) == false) { Thread.Sleep(20); }
+                        direction[0] = false;
+                        Thread.Sleep(4000);
+                    }
                     while (Communication(left) == false) { Thread.Sleep(20); }
                     Thread.Sleep(100);
-                }
+                }*/
             }
             try
             {
