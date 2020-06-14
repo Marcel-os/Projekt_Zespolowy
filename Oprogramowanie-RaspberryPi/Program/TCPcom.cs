@@ -33,6 +33,7 @@ namespace Program
                 //var th = new Thread(autoCont.Control);
                 var th = new Thread(uart.Sensors);
                 th.IsBackground = true;
+                int fr = 0;
 
                 while (true)
                 {
@@ -45,14 +46,36 @@ namespace Program
                         EventHandler(data, th);
                         
                         Console.WriteLine("Received: " + data);
-
-                        
                     }
                     else
+                    {
+                        /*if(uart.front != fr)
+                        {
+                            SendData(client, stream);
+                            fr = uart.front;
+                        }*/
                         Thread.Sleep(1);
+                    }
+                        
                 }
             }
         }
+
+       /* private void SendData(TcpClient client, NetworkStream stream)
+        {
+            if (client.Connected)
+            {
+                string msg = uart.lGround.ToString() + " "
+                           + uart.rGround.ToString() + " "
+                           + uart.front.ToString() + " "
+                           + uart.battery.ToString() + " "
+                           + uart.isDocked.ToString();
+                byte[] outstream = Encoding.ASCII.GetBytes(msg);
+
+                stream.Write(outstream, 0, outstream.Length);
+                stream.Flush();
+            }
+        }*/
 
         private static byte[] ReadData(NetworkStream stream)
         {

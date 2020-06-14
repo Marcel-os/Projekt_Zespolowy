@@ -248,7 +248,39 @@ void autopilot(){
   get_distance() - czujnik z przodu
   check_base() - czy jest w stacji dokowania
   */
-  while(true){delay(100);}
+  int dis = 850;
+  bool isGoing = false;
+  int iterator = 0;
+  while(true){
+    if(dis > get_distance() && isGoing == false){
+      go_straight();
+      isGoing = true;
+      //iterator++;
+    }
+    
+    if(dis < get_distance()){
+      if(isGoing == true){
+        go_stop();
+        isGoing = false;
+        delay(100);
+        rotateL(160);
+      }
+      else{
+        rotateL(30);
+        delay(100);
+      }
+    }
+    /*
+    if(iterator != 0 && iterator % 3 == 0){
+      if(dis == 1000){
+        dis = 600;
+      }
+      else if(dis == 600){
+        break;
+      }
+    }*/
+    delay(100);
+  }
 }
 
 void loop() {

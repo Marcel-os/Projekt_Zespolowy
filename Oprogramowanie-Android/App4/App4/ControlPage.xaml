@@ -28,14 +28,20 @@
                     Text="Disconnect"
                     Clicked="BtnDisconnect_Clicked"/>
 
+        <Label x:Name="labelData"
+               Text=""
+               Grid.Column="0"
+               Grid.Row="0"
+               VerticalOptions="Center"
+               HorizontalOptions="Start"/>
         <Label Text="Auto"
                Grid.Column="2"
-               Grid.Row="3"
+               Grid.Row="4"
                VerticalOptions="Center"
                HorizontalOptions="Start"/>
         <Switch x:Name="switchTg"
                 Grid.Column="2"
-                Grid.Row="3"
+                Grid.Row="4"
                 HorizontalOptions="End"
                 VerticalOptions="Center"
                 Toggled="Switch_Toggled"/>

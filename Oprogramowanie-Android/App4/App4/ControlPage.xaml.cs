@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -44,6 +45,7 @@ namespace App4
                 {
                     outstream = Encoding.ASCII.GetBytes("auto");
                     ControlButtons(true);
+                    //ReceiveData();
                 }
                 if (!switchTg.IsToggled)
                 {
@@ -60,10 +62,51 @@ namespace App4
             }
         }
 
+/*        private void ReceiveData()
+        {
+            while (switchTg.IsToggled)
+            {
+                if (serverStream.DataAvailable)
+                {
+                    byte[] received = ReadData(serverStream);
+
+                    string data = Encoding.UTF8.GetString(received);
+                    labelData.Text = data;
+                    //EventHandler(data, th);
+
+                    //Console.WriteLine("Received: " + data);
+                    Thread.Sleep(200);
+
+                }
+                else
+                    Thread.Sleep(20);
+            }
+        }
+
+        private static byte[] ReadData(NetworkStream stream)
+        {
+            List<byte> received = new List<byte>();
+
+            while (stream.DataAvailable)
+            {
+                byte[] buffer = new byte[248];
+
+                stream.Read(buffer, 0, buffer.Length);
+
+                received.AddRange(buffer);
+            }
+
+            received.RemoveAll(b => b == 0);
+
+            return received.ToArray();
+        }*/
+
         private void ControlButtons(bool auto)
         {
             if (!auto)
             {
+                labelData.IsVisible = false;
+                btnStop.IsVisible = true;
                 btnUp.IsVisible = true;
                 btnDown.IsVisible = true;
                 btnLeft.IsVisible = true;
@@ -71,6 +114,8 @@ namespace App4
             }
             if (auto)
             {
+                labelData.IsVisible = true;
+                btnStop.IsVisible = false;
                 btnUp.IsVisible = false;
                 btnDown.IsVisible = false;
                 btnLeft.IsVisible = false;

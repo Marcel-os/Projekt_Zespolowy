@@ -25,8 +25,8 @@ namespace Program
 
         private void Chauffeur(/*Thread th*/)
         {
-            string straight = "1\r\n", left = "4\r\n", right = "3\r\n", stop = "0\r\n";
-            bool[] direction = { false, false, false, false };
+            //string straight = "1\r\n", left = "4\r\n", right = "3\r\n", stop = "0\r\n";
+            //bool[] direction = { false, false, false, false };
             while (!sleepSwitch)
             {
                 Sensors();
