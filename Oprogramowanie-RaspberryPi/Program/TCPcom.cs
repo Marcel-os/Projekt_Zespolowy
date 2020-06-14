@@ -122,17 +122,17 @@ namespace Program
                     break;
                 case "auto":
                     uart.Communication("5\r\n");
-                    Thread.Sleep(3000);
-                    th.Start();
+                    //Thread.Sleep(3000);
+                    //th.Start();
                     break;
                 case "manual":
                     uart.Communication("6\r\n");
-                    th.Interrupt();
-                    autoCont.SleepSwitch = true;
+                    //th.Interrupt();
+                    //autoCont.SleepSwitch = true;
                     //uart.SleepSwitchua = true;
                     //uart.Communication("0\r\n");
-                    th.Join();
-                    Console.WriteLine("Is auto con alive: " + th.IsAlive.ToString());
+                    //th.Join();
+                    //Console.WriteLine("Is auto con alive: " + th.IsAlive.ToString());
                     break;
                 default:
                     break;

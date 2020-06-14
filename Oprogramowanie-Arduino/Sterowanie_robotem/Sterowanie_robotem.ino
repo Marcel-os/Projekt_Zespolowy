@@ -250,8 +250,17 @@ void autopilot(){
   */
   int dis = 850;
   bool isGoing = false;
-  int iterator = 0;
+  byte inByte[3] = {'0','0','0'};
   while(true){
+    if(Serial.available()){
+      Serial.readBytes(inByte, 3);
+      if(inByte[0]== '6' && inByte[1]== '\r' && inByte[2]=='\n' ){
+        go_stop();
+        isGoing = false;
+        break;
+      }
+    }
+    
     if(dis > get_distance() && isGoing == false){
       go_straight();
       isGoing = true;
