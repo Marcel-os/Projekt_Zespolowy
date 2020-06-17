@@ -272,7 +272,7 @@ void autopilot(){
         go_stop();
         isGoing = false;
         delay(100);
-        rotateL(160);
+        rotateL(( rand() % 270 ) + 90);
       }
       else{
         rotateL(30);
